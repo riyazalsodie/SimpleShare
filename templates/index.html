@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>SimpleShare - Futuristic File Transfer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="sci-fi-theme">
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="grid-lines"></div>
+        <div class="floating-particles"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <h1>SimpleShare</h1>
+                <div class="logo-subtitle">Futuristic File Transfer</div>
+            </div>
+            <div class="theme-toggle">
+                <button id="themeToggle" class="neon-button">
+                    <span class="toggle-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Session Management Modal -->
+        <div id="sessionModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🔐 Session Management</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="session-info">
+                        <p>Your device will be automatically authenticated with a secure token.</p>
+                        <div class="session-status">
+                            <div class="status-indicator" id="sessionStatus">⏳ Creating session...</div>
+                            <div class="token-display" id="tokenDisplay" style="display: none;">
+                                <span class="token-label">Session Token:</span>
+                                <span class="token-value" id="sessionToken"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="session-actions">
+                        <button class="neon-button" id="createSessionBtn">Create New Session</button>
+                        <button class="neon-button secondary" id="validateSessionBtn">Validate Session</button>
+                    </div>
+                    <div id="sessionError" class="session-error" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connected Devices Panel -->
+        <section class="devices-section">
+            <div class="devices-panel">
+                <h2 class="section-title">📱 Connected Devices</h2>
+                <div class="devices-grid" id="devicesGrid">
+                    <div class="loading-devices">Loading devices...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Information Panel -->
+        <section class="system-info-section">
+            <div class="system-panel">
+                <h2 class="section-title">💻 System Information</h2>
+                <div class="system-grid">
+                    <div class="system-item">
+                        <div class="system-icon">🌐</div>
+                        <div class="system-details">
+                            <div class="system-label">IP Address</div>
+                            <div class="system-value" id="systemIP">{{ local_ip }}</div>
+                        </div>
+                    </div>
+                    <div class="system-item">
+                        <div class="system-icon">💾</div>
+                        <div class="system-details">
+                            <div class="system-label">Max File Size</div>
+                            <div class="system-value" id="maxFileSize">{{ config.max_file_size_mb }}MB</div>
+                        </div>
+                    </div>
+                    <div class="system-item">
+                        <div class="system-icon">🔐</div>
+                        <div class="system-details">
+                            <div class="system-label">Active Sessions</div>
+                            <div class="system-value" id="activeSessions">--</div>
+                        </div>
+                    </div>
+                    <div class="system-item">
+                        <div class="system-icon">📱</div>
+                        <div class="system-details">
+                            <div class="system-label">Connected Devices</div>
+                            <div class="system-value" id="connectedDevices">--</div>
+                        </div>
+                    </div>
+                    <div class="system-item">
+                        <div class="system-icon">⏱️</div>
+                        <div class="system-details">
+                            <div class="system-label">Server Uptime</div>
+                            <div class="system-value" id="serverUptime">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Connection Section -->
+        <section class="connection-section">
+            <div class="qr-container">
+                <h2 class="section-title">📱 Connect Your Phone</h2>
+                <div class="qr-code-wrapper">
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="qr-code">
+                    <div class="qr-overlay">
+                        <div class="scan-text">Scan to Connect</div>
+                    </div>
+                </div>
+                <div class="server-info">
+                    <div class="info-item">
+                        <span class="info-label">🌐 Server URL:</span>
+                        <span class="info-value">{{ server_url }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">💻 Local IP:</span>
+                        <span class="info-value">{{ local_ip }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- File Transfer Section -->
+        <div class="transfer-container">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <h2 class="section-title">📱 Phone Upload (to PC)</h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <div class="upload-icon">📁</div>
+                        <div class="upload-text">
+                            <div class="primary-text">Drop files here or click to select</div>
+                            <div class="secondary-text">Files will be available for PC download</div>
+                        </div>
+                        <input type="file" id="fileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.mp4,.mp3,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar" style="display: none;">
+                        <button class="neon-button upload-btn" onclick="document.getElementById('fileInput').click()">
+                            Choose Files
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Upload Progress -->
+                <div id="uploadProgress" class="upload-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Uploading...</div>
+                </div>
+
+                <!-- Upload Results -->
+                <div id="uploadResults" class="upload-results"></div>
+            </section>
+
+            <!-- Download Section -->
+            <section class="download-section">
+                <h2 class="section-title">💻 PC Upload (to Phone)</h2>
+                
+                <!-- File Controls -->
+                <div class="file-controls">
+                    <div class="search-controls">
+                        <input type="text" id="searchInput" placeholder="Search files..." class="search-input">
+                        <select id="typeFilter" class="filter-select">
+                            <option value="">All Types</option>
+                            <option value=".jpg,.jpeg,.png,.gif">Images</option>
+                            <option value=".mp4,.avi,.mov,.mkv">Videos</option>
+                            <option value=".mp3,.wav,.flac">Audio</option>
+                            <option value=".pdf,.doc,.docx">Documents</option>
+                            <option value=".zip,.rar,.7z">Archives</option>
+                        </select>
+                        <input type="date" id="dateFilter" class="date-input">
+                    </div>
+                    <div class="action-controls">
+                        <button class="neon-button" id="selectAllBtn">Select All</button>
+                        <button class="neon-button" id="downloadZipBtn">Download ZIP</button>
+                        <button class="neon-button warning" id="cleanupBtn">Cleanup Old Files</button>
+                    </div>
+                </div>
+                
+                <!-- PC Upload Area -->
+                <div class="pc-upload-area" id="pcUploadArea">
+                    <div class="pc-upload-content">
+                        <div class="pc-upload-icon">💻</div>
+                        <div class="pc-upload-text">
+                            <div class="primary-text">Drag files here to make them available for phone</div>
+                            <div class="secondary-text">Files will appear in the download list below</div>
+                        </div>
+                        <input type="file" id="pcFileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.mp4,.mp3,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar" style="display: none;">
+                        <button class="neon-button pc-upload-btn" onclick="document.getElementById('pcFileInput').click()">
+                            Select Files
+                        </button>
+                    </div>
+                </div>
+
+                <!-- File List -->
+                <div class="file-list-container">
+                    <div class="file-list-header">
+                        <h3>📁 All Available Files (PC + Phone)</h3>
+                        <button class="neon-button refresh-btn" onclick="loadFiles()">
+                            🔄 Refresh
+                        </button>
+                    </div>
+                    <div id="fileList" class="file-list">
+                        <div class="loading-files">Loading files...</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Processing...</div>
+        </div>
+    </div>
+
+    <!-- Socket.IO for real-time updates -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 
