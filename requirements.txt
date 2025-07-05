@@ -1,0 +1,20 @@
+# SimpleShare - Python Dependencies
+# Credits: R ! Y 4 Z
+
+# Core Flask Framework
+Flask==2.3.3
+Flask-CORS
+Flask-SocketIO==5.3.6
+
+# QR Code Generation
+qrcode[pil]
+Pillow
+
+# System Monitoring
+psutil
+
+# WebSocket Support
+python-socketio
+
+# Additional Utilities
+Werkzeug 

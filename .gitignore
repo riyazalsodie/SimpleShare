@@ -1,0 +1,42 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+*.spec
+
+# Installer logs
+debug.log
+
+# Windows
+*.exe
+*.bat
+*.dll
+*.msi
+*.zip
+
+# macOS
+.DS_Store
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+
+# Environment
+.env
+.venv
+venv/
+ENV/
+
+# Test and temp files
+temp/
+server_start_time.txt 
